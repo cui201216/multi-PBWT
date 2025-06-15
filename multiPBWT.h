@@ -8,7 +8,6 @@
 #include <chrono>
 #include<iostream>
 #include <algorithm>
-#include <array>
 #include <fstream>
 #include <numeric>
 #include <sstream>
@@ -27,20 +26,11 @@ struct multiPBWT {
     double readPaneltime = 0;
     double makePanelTime = 0;
     double inPanelQuerytime = 0;
-    double inPanelFilteringtime = 0;
-    double inPanelIdentificationtime = 0;
     double readQuerytime = 0;
     double outPanelQuerytime = 0;
-    double outPanelFilteringtime = 0;
-    double outPanelIdentificationtime = 0;
-    u_long inPanelAlternativeNum = 0;
     u_long inPanelMatchNum = 0;
-    u_long outPanelAlternativeNum = 0;
     u_long outPanelMatchNum = 0;
-    u_long alternativeSyllableNum = 0;
-    u_long matchLen = 0;
     vector<string> IDs;
-    vector<int> physLocs;
     vector<vector<uint8_t> > X; // MN bits
     vector<vector<int> > array; // 32MN/B bits
     vector<vector<int> > divergence; // 32MN/B bits
