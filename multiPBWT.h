@@ -266,3 +266,152 @@ int multiPBWT::makePanel() // fuzzy way :overall
     makePanelTime = ((double) (end - start)) / CLOCKS_PER_SEC;
     return 0;
 }
+
+int multiPBWT::inPanelLongMatchQuery(int L, string inPanelOutput_file) {
+    clock_t start, end;
+    start = clock();
+
+    ofstream out(inPanelOutput_file);
+    if (out.fail())
+        return 2;
+
+    int k;
+    for (k = 0; k < N - 1; k++) {
+        bool m[t];
+        for (int _ = 0; _ < t; _++) {
+            m[_] = false;
+        }
+        int top = 0;
+        bool report = false;
+        for (int i = 0; i < M; i++) {
+            if (divergence[k][i] > k - L) {
+                for (int w = 0; w < t - 1; w++) {
+                    for (int v = w + 1; v < t; v++) {
+                        if (m[w] == true && m[v] == true) {
+                            report = true;
+                            break;
+                        }
+                    }
+                }
+                if (report == true) {
+                    for (int i_a = top; i_a < i - 1; i_a++) {
+                        int maxDivergence = 0;
+                        for (int i_b = i_a + 1; i_b < i; i_b++) {
+                            if (divergence[k][i_b] > maxDivergence) {
+                                maxDivergence = divergence[k][i_b];
+                            }
+                            uint32_t temp1, temp2, fuzzy1, fuzzy2;
+                            int index_a = array[k][i_a], index_b =
+                                    array[k][i_b];
+                            int site1 = X[index_a][k];
+                            int site2 = X[index_b][k];
+
+                            if (site1 != site2) {
+                                out << IDs[index_a] << '\t' << IDs[index_b] << '\t' << maxDivergence << '\t'
+           << k-1 << '\n';
+                                ++this->inPanelMatchNum;
+                            }
+                        }
+                    }
+                    report = false;
+                } //end if(report==true)
+
+                top = i;
+                for (int _ = 0; _ < t; _++) {
+                    m[_] = false;
+                }
+                //report = false;
+            } // end if(divergence[k][i]>k-l)
+            //change m[]
+            
+            int site = X[ array[k][i] ][k];
+
+            m[site] = true;
+        } //for i from 0 to M-1
+        //cheak bottom block
+        for (int w = 0; w < t - 1; w++) {
+            for (int v = w + 1; v < t; v++) {
+                if (m[w] == true && m[v] == true) {
+                    report = true;
+                }
+            }
+        }
+        if (report == true) {
+            for (int i_a = top; i_a < M - 1; i_a++) {
+                int maxDivergence = 0;
+                for (int i_b = i_a + 1; i_b < M; i_b++) {
+                    if (divergence[k][i_b] > maxDivergence) {
+                        maxDivergence = divergence[k][i_b];
+                    }
+                    uint32_t temp1, temp2, fuzzy1, fuzzy2;
+                    int index_a = array[k][i_a];
+                    int index_b = array[k][i_b];
+                    int site1 = X[index_a][k];
+                    int site2 = X[index_b][k];
+                    
+                    if (site1 != site2) {
+                        out << IDs[index_a] << '\t' << IDs[index_b] << '\t' << maxDivergence << '\t'
+            << k-1 << '\n';
+                    }
+                }
+            }
+        }
+    }
+
+    //late site     
+    int top = 0;
+    for (int i = 0; i < M; i++) {
+        if (divergence[k][i] > k - L + 1) {
+            for (int i_a = top; i_a < i - 1; i_a++) {
+                int maxDivergence = 0;
+                for (int i_b = i_a + 1; i_b < i; i_b++) {
+                    if (divergence[k][i_b] > maxDivergence) {
+                        maxDivergence = divergence[k][i_b];
+                    }
+
+                    int index_a = array[k][i_a];
+                    int index_b = array[k][i_b];
+
+                    int site1 = X[index_a][k];
+                    int site2 = X[index_b][k];
+                    
+
+
+
+
+                    if (site1 == site2) {
+                        out << IDs[index_a] << '\t' << IDs[index_b] << '\t' << maxDivergence << '\t'
+           << k<< '\n';
+                    } else if (site1 != site2) {
+                        if (k - maxDivergence >= L) {
+                            out << IDs[index_a] << '\t' << IDs[index_b] << '\t' << maxDivergence << '\t'
+            << k << '\n';
+                        }
+                    }
+                }
+            }
+            top = i;
+        }
+    }
+    //bottom block
+    for (int i_a = top; i_a < M - 1; i_a++) {
+        int maxDivergence = 0;
+        for (int i_b = i_a + 1; i_b < M; i_b++) {
+            int index_a = array[k][i_a];
+            int index_b = array[k][i_b];
+            if (divergence[k][i_b] > maxDivergence) {
+                maxDivergence = divergence[k][i_b];
+            }
+            out << IDs[index_a] << '\t' << IDs[index_b] << '\t' << maxDivergence << '\t'
+           << N<< '\n';
+        }
+    }
+
+    end = clock();
+
+     this->inPanelQuerytime = ((double) (end - start)) / CLOCKS_PER_SEC;
+    
+    return 0;
+    out.close();
+    cout << "matches has been put into " << inPanelOutput_file << endl;
+}

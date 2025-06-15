@@ -3,12 +3,13 @@
 // TIP 要<b>Run</b>代码，请按 <shortcut actionId="Run"/> 或点击装订区域中的 <icon src="AllIcons.Actions.Execute"/> 图标。
 int main()
 {
-    string panel = "out";
+    string panel = "sites.txt";
     multiPBWT mpbwt;
-    mpbwt.readMacsPanel(panel);
-    int a=0;
-    while (mpbwt.X[a][0]==0){a++;}
-    int c=a;
-    mpbwt.makePanel();
+    int a= mpbwt.readMacsPanel(panel);
+    std::cout << "read panel file done: " << a << endl;
+    int b =mpbwt.makePanel();
+    std::cout << "make panel file done: " << b << endl;
+    int c= mpbwt.inPanelLongMatchQuery(100,"outputFile");
+    std::cout << "query done: " << c << endl;
     return 0;
 }
