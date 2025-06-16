@@ -35,7 +35,7 @@ bool validateFiles(const std::string& inputFile, const std::string& outputFile) 
 }
 
 // 处理 MaCS 格式单倍型数据，查询长匹配区间
-int main(int argc, char* argv[]) {
+/*int main(int argc, char* argv[]) {
     std::string panel = "sites.txt";      // 默认 MaCS 输入文件
     std::string outputFile;               // 输出文件动态生成
     int queryLength = 100;                // 默认最小匹配长度
@@ -107,6 +107,28 @@ int main(int argc, char* argv[]) {
     if (a != 0) return b;
 
     int c = haplotypeMatcher.inPanelLongMatchQuery(queryLength, outputFile);
+    std::cout << "查询完成: " << c << "\n";
+    return c;
+}
+*/
+
+int main()
+{
+    std::string panel = "simple_test.panel";      // 默认 MaCS 输入文件
+    string query = "simple_test.query";
+    std::string outputFile="out ";               // 输出文件动态生成
+    int queryLength = 3;                // 默认最小匹配长度
+    multiPBWT haplotypeMatcher;
+    int a = haplotypeMatcher.readMacsPanel(panel);
+    std::cout << "读取面板: " << a << "\n";
+
+    int d = haplotypeMatcher.readMacsQuery(query);
+    std::cout << "读取query: " << d << "\n";
+
+    int b = haplotypeMatcher.makePanel();
+    std::cout << "生成面板: " << b << "\n";
+
+    int c = haplotypeMatcher.outPanelLongMatchQuery(queryLength, outputFile);
     std::cout << "查询完成: " << c << "\n";
     return c;
 }
