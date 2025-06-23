@@ -183,7 +183,12 @@ int multiPBWT::readMacsPanel(string panel_file) {
         return 10;
     }
     t = maxSite+1;
-    u = new int[(unsigned long)N * M * t];
+    try {
+        u = new int[(unsigned long)N * M * t];
+    } catch (const std::bad_alloc& e) {
+        std::cerr << "内存分配失败 (u 数组): " << e.what() << std::endl;
+        return -1;
+    }
 
     end = clock();
     readPaneltime = ((double)(end - start)) / CLOCKS_PER_SEC;
